@@ -29,11 +29,13 @@
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 float p = 3.1415926;
 float root2 = 1.41421356237;
-int posx[4] = { 64, 150, 64, -20 };
-int posy[4] = { -5, 64, 168, 64 };  // horizintal + vertical asteroids
+// int posx[4] = { 64, 150, 64, -20 };
+// int posy[4] = { -5, 64, 168, 64 };  // horizintal + vertical asteroids
+int posx[4] = { 64, random(130,160), 64, -random(10,30) };
+int posy[4] = { -random(10,30), 64, random(130,160), 64 };
 
 int psx[4] = { 148, 135, -15, -5 };
-int psy[4] = { -20, 135, 133, -5 };// diagonals
+int psy[4] = { -20, 135, 133, -5 };  // diagonals
 byte dir() {
   int x = analogRead(X);
   int y = analogRead(Y);
@@ -352,25 +354,26 @@ void GameOver(byte currentScore, byte highScore) {
   tft.setCursor(10, 110);
   tft.print("Press E to restart");
   posx[0] = 64;
-  posx[1] = 150;
+  posx[1] = random(130,160);
   posx[2] = 64;
-  posx[3] = -20;
+  posx[3] = -random(10,30);
 
-  posy[0] = -5;
+  posy[0] = -random(10,30);
   posy[1] = 64;
-  posy[2] = 168;
-  posy[3] = 64;//resetting values for vertical&horizontal
+  posy[2] = random(130,160);
+  posy[3] = 64;  //resetting values for vertical&horizontal
+// int posx[4] = { 64, random(130,160), 64, -random(10,30) };
+// int posy[4] = { -random(10,30), 64, random(130,160), 64 };
 
+  psx[0] = 148;
+  psx[1] = 135;
+  psx[2] = -15;
+  psx[3] = -5;
 
-psx[0]=148;
-psx[1]=135;
-psx[2]=-15;
-psx[3]=-5;
-
-psy[0]=-20;
-psy[1]=135;
-psy[2]=133;
-psy[3]=-5;//resetting values for diagonals
+  psy[0] = -20;
+  psy[1] = 135;
+  psy[2] = 133;
+  psy[3] = -5;  //resetting values for diagonals
 
   while (digitalRead(E)) {
   }
