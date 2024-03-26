@@ -244,21 +244,21 @@ void startUp() {
       tft.setCursor(4, 44);
       tft.print("3. Press B to Reload.");
       tft.setCursor(4, 54);
-      tft.print("4. Press A to get");
+      tft.print("4. Press A to use");
       tft.setCursor(4, 64);
-      tft.print("powerups.");
+      tft.print("SCATTER.");
       tft.setCursor(4, 74);
       tft.print("5. Press D to use");
       tft.setCursor(4, 84);
-      tft.print("powerups.");
+      tft.print("SHIELD.");
       tft.setCursor(4, 94);
-      tft.print("6. Press F to");
+      tft.print("6. Press F in game");
       tft.setCursor(4, 104);
-      tft.print("Continue to play");
-      tft.setCursor(4, 114);
-      tft.print("7. Press F in game");
-      tft.setCursor(4, 124);
       tft.print("to pause");
+      tft.setCursor(4, 114);
+      tft.print("7. Press F to");
+      tft.setCursor(4, 124);
+      tft.print("Continue to play");
 
       // tft.setCursor(4, 114);
       // tft.print("10. Press E to start");
@@ -364,8 +364,8 @@ void GameOver(byte currentScore, byte highScore) {
 
 unsigned long pt_asteroids[9] {0,0,0,0,0,0,0,0,0};
 
-byte asteroids(int x, int t[9], bool checker[9]) {
-  if (x == 1) {
+byte asteroids( int t[9], bool checker[9]) {
+
     // tft.fillCircle(64, asteroid_posn[1][1], 3, YELLOW);
     if (millis() - pt_asteroids[1] >= t[1] & checker[1]) {
       asteroid_posn[1][1] += 1;
@@ -377,9 +377,9 @@ byte asteroids(int x, int t[9], bool checker[9]) {
       GameOver(50, 99);
       return 1;
     }
-  }
-  if (x == 2) {
-    tft.fillCircle(asteroid_posn[2][0], asteroid_posn[2][1], 3, YELLOW);
+  
+
+    // tft.fillCircle(asteroid_posn[2][0], asteroid_posn[2][1], 3, YELLOW);
     if (millis() - pt_asteroids[2] >= t[2] && checker[2]) {
       asteroid_posn[2][1] += 1;
       asteroid_posn[2][0] -= 1;
@@ -391,9 +391,9 @@ byte asteroids(int x, int t[9], bool checker[9]) {
       GameOver(50, 99);
       return 2;
     }
-  }
-  if (x == 3) {
-    tft.fillCircle(asteroid_posn[3][0], 64, 3, YELLOW);
+  
+
+    // tft.fillCircle(asteroid_posn[3][0], 64, 3, YELLOW);
     if (millis() - pt_asteroids[3] >= t[3] && checker[3]) {
       asteroid_posn[3][0] -= 1;
       pt_asteroids[3] = millis();
@@ -404,9 +404,9 @@ byte asteroids(int x, int t[9], bool checker[9]) {
       GameOver(50, 99);
       return 3;
     }
-  }
-  if (x == 4) {
-    tft.fillCircle(asteroid_posn[4][0], asteroid_posn[4][1], 3, YELLOW);
+  
+
+    // tft.fillCircle(asteroid_posn[4][0], asteroid_posn[4][1], 3, YELLOW);
 
     if (millis() - pt_asteroids[4] >= t[4] && checker[4]) {
       asteroid_posn[4][1] -= 1;
@@ -419,9 +419,9 @@ byte asteroids(int x, int t[9], bool checker[9]) {
       GameOver(50, 99);
       return 4;
     }
-  }
-  if (x == 5) {
-      tft.fillCircle(64, asteroid_posn[5][1], 3, YELLOW);
+  
+
+      // tft.fillCircle(64, asteroid_posn[5][1], 3, YELLOW);
 
       if (millis() - pt_asteroids[5] >= t[5] && checker[5]) {
         asteroid_posn[5][1] -= 1;
@@ -433,9 +433,9 @@ byte asteroids(int x, int t[9], bool checker[9]) {
         GameOver(50, 99);
         return 5;
       }    
-  }
-  if (x == 6) {
-    tft.fillCircle(asteroid_posn[6][0], asteroid_posn[6][1], 3, YELLOW);
+  
+
+    // tft.fillCircle(asteroid_posn[6][0], asteroid_posn[6][1], 3, YELLOW);
     if (millis() - pt_asteroids[6] >= t[6] && checker[6]) {
       asteroid_posn[6][1] -= 1;
       asteroid_posn[6][0] += 1;
@@ -447,9 +447,9 @@ byte asteroids(int x, int t[9], bool checker[9]) {
       GameOver(50, 99);
       return 6;
     }
-  }
-  if (x == 7) {
-    tft.fillCircle(asteroid_posn[7][0], 64, 3, YELLOW);
+  
+
+    // tft.fillCircle(asteroid_posn[7][0], 64, 3, YELLOW);
     if (millis() - pt_asteroids[7] >= t[7] && checker[7]) {
       asteroid_posn[7][0] += 1;
       pt_asteroids[7] = millis();
@@ -460,9 +460,9 @@ byte asteroids(int x, int t[9], bool checker[9]) {
       GameOver(50, 99);
       return 7;
     }
-  }
-  if (x == 8) {
-    tft.fillCircle(asteroid_posn[8][0], asteroid_posn[8][1], 3, YELLOW);
+  
+
+    // tft.fillCircle(asteroid_posn[8][0], asteroid_posn[8][1], 3, YELLOW);
     if (millis() - pt_asteroids[8] >= t[8] && checker[8]) {
       asteroid_posn[8][1] += 1;
       asteroid_posn[8][0] += 1;
@@ -474,7 +474,7 @@ byte asteroids(int x, int t[9], bool checker[9]) {
       GameOver(50, 99);
       return 8;
     }
-  }
+  
 }
 
 int ammo = 7;
@@ -547,9 +547,9 @@ int shooter(int direction) {
       return NULL;
   }
 }
-unsigned long pt = 0;
+unsigned long pt_scatter = 0;
 bool scatter(int t) {
-  if ((millis() - pt >= t) ) {
+  if ((millis() - pt_scatter >= t) ) {
     tft.drawCircle(5, 124, 3, BLUE);
       if(!digitalRead(A)){
       tft.drawLine(64, 64, 64, 0, BLUE);
@@ -569,7 +569,24 @@ bool scatter(int t) {
       tft.drawLine(64, 64, 0, 128, BLACK);
       tft.drawLine(64, 64, 0, 64, BLACK);
       tft.drawLine(64, 64, 0, 0, BLACK);
-      pt = millis();
+      pt_scatter = millis();
+      return 1;
+      }
+  }
+  else{
+    tft.drawCircle(5, 124, 3, BLACK);
+    return 0;
+  }
+}
+unsigned long pt_shield = 0;
+bool shield(int t) {
+  if ((millis() - pt_shield >= t) ) {
+    tft.drawCircle(5, 124, 3, BLUE);
+      if(!digitalRead(A)){
+tft.drawCircle(64, 64, 7, CYAN);
+      delay(150);
+tft.drawCircle(64, 64, 7, BLACK);
+      pt_shield = millis();
       return 1;
       }
   }
@@ -620,6 +637,6 @@ tft.fillCircle(64, asteroid_posn[1][1], 3, BLACK);
   // }
   int x[9] = {100,100,100,100,100,100,100,100,100};
 
-for(int i = 1 ; i <= 8 ; i++)
-asteroids(i,x,y);
+shield(100);
+asteroids(x,y);
 }
