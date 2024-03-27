@@ -29,10 +29,12 @@
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 float p = 3.1415926;
 float root2 = 1.41421356237;
-
-
-byte asteroid_posn_reset[9][2] {{0,0},{64,0},{128,0},{128,64},{128,128},{64,128},{0,128},{0,64},{0,0}};
-byte asteroid_posn[9][2] {{0,0},{64,0},{128,0},{128,64},{128,128},{64,128},{0,128},{0,64},{0,0}};
+byte ammo = 7;
+int asteroid_speed[9] = { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+int asteroid_speed_reset[9] = { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+byte asteroid_posn_reset[9][2]{ { 0, 0 }, { 64, 0 }, { 128, 0 }, { 128, 64 }, { 128, 128 }, { 64, 128 }, { 0, 128 }, { 0, 64 }, { 0, 0 } };
+byte asteroid_posn[9][2]{ { 0, 0 }, { 64, 0 }, { 128, 0 }, { 128, 64 }, { 128, 128 }, { 64, 128 }, { 0, 128 }, { 0, 64 }, { 0, 0 } };
+bool asteroid_presence[9] = { 1, 1, 0, 0, 0, 0, 0, 0, 0 };
 byte dir() {
   int x = analogRead(X);
   int y = analogRead(Y);
@@ -143,13 +145,10 @@ void setup() {
   tft.initR(INITR_BLACKTAB);  // initialize a ST7735S chip, black tab
   tft.fillScreen(ST7735_BLACK);
 
-  // scoreSetup();
-  // playerSetup();
-  // ammoSetup();
-
   pinMode(A5, INPUT);
   randomSeed(analogRead(A5));  // random seed
 
+  // EEPROM.update(address,0);
   startUp();
   tft.fillScreen(ST7735_BLACK);
   scoreSetup();
@@ -157,8 +156,6 @@ void setup() {
   ammoSetup();
   scoreDisplay(0);
   ammoDisplay(7);
-
-  // EEPROM.update(address,99);
 }
 int score = 0;
 void scoreSetup() {
@@ -284,7 +281,7 @@ void pause(byte currentScore, byte highScore) {
 
   tft.setCursor(8, 70);
   tft.print("CURRENT SCORE:");
-  tft.setCursor(90, 65);
+  tft.setCursor(92, 65);
   tft.setTextSize(2);
   tft.print(currentScore);
 
@@ -293,7 +290,7 @@ void pause(byte currentScore, byte highScore) {
   tft.print("HIGH SCORE:");
   tft.setCursor(90, 85);
   tft.setTextSize(2);
-  tft.print(highScore);
+  tft.print(EEPROM.read(address));
 
   delay(100);
   while (digitalRead(F)) {
@@ -303,8 +300,8 @@ void pause(byte currentScore, byte highScore) {
   scoreSetup();
   playerSetup();
   ammoSetup();
-  scoreDisplay(0);
-  ammoDisplay(7);
+  scoreDisplay(score);
+  ammoDisplay(ammo);
 }
 void GameOver(byte currentScore, byte highScore) {
 
@@ -328,13 +325,17 @@ void GameOver(byte currentScore, byte highScore) {
   tft.setCursor(90, 65);
   tft.setTextSize(2);
   tft.print(currentScore);
-
+  if (currentScore > highScore) {
+    EEPROM.update(address, currentScore);
+  }
+  score = 0;
+  ammo = 7;
   tft.setTextSize(1);
   tft.setCursor(18, 90);
   tft.print("HIGH SCORE:");
   tft.setCursor(90, 85);
   tft.setTextSize(2);
-  tft.print(highScore);
+  tft.print(EEPROM.read(address));
 
   tft.setTextSize(1);
   tft.setCursor(10, 110);
@@ -342,10 +343,15 @@ void GameOver(byte currentScore, byte highScore) {
 
 
 
-  for(int i = 0 ; i < 2 ; i++){
-    for(int j = 0 ; j < 9 ; j++){
-      asteroid_posn[j][i]=asteroid_posn_reset[j][i];
+
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 9; j++) {
+      asteroid_posn[j][i] = asteroid_posn_reset[j][i];
     }
+  }
+  for (int i = 1; i <= 8; i++) {
+    // asteroid_presence[i]++;
+    asteroid_speed[i] = asteroid_speed_reset[i];
   }
   while (digitalRead(E)) {
   }
@@ -361,123 +367,120 @@ void GameOver(byte currentScore, byte highScore) {
   // ammoDisplay(7);
 }
 
+unsigned long pt_asteroids[9]{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+byte asteroids(int t[9], bool checker[9], byte increment[9]) {
 
-unsigned long pt_asteroids[9] {0,0,0,0,0,0,0,0,0};
+  // tft.fillCircle(64, asteroid_posn[1][1], 3, YELLOW);
+  if (checker[1] && millis() - pt_asteroids[1] >= t[1]) {
+    asteroid_posn[1][1] += increment[1];
+    pt_asteroids[1] = millis();
+    tft.fillCircle(64, asteroid_posn[1][1] - increment[1], 3, BLACK);
+    tft.fillCircle(64, asteroid_posn[1][1], 3, YELLOW);
+  }
+  if (asteroid_posn[1][1] >= 55) {
+    GameOver(score, EEPROM.read(address));
+    return 1;
+  }
 
-byte asteroids( int t[9], bool checker[9]) {
 
-    // tft.fillCircle(64, asteroid_posn[1][1], 3, YELLOW);
-    if (millis() - pt_asteroids[1] >= t[1] & checker[1]) {
-      asteroid_posn[1][1] += 1;
-      pt_asteroids[1] = millis();
-      tft.fillCircle(64, asteroid_posn[1][1] - 1, 3, BLACK);
-      tft.fillCircle(64, asteroid_posn[1][1], 3, YELLOW);
-    }
-    if (asteroid_posn[1][1] >= 55) {
-      GameOver(50, 99);
-      return 1;
-    }
-  
+  // tft.fillCircle(asteroid_posn[2][0], asteroid_posn[2][1], 3, YELLOW);
+  if (checker[2] && millis() - pt_asteroids[2] >= t[2]) {
+    asteroid_posn[2][1] += increment[2];
+    asteroid_posn[2][0] -= increment[2];
+    pt_asteroids[2] = millis();
+    tft.fillCircle(asteroid_posn[2][0] + increment[2], asteroid_posn[2][1] - increment[2], 3, BLACK);
+    tft.fillCircle(asteroid_posn[2][0], asteroid_posn[2][1], 3, YELLOW);
+  }
+  if (asteroid_posn[2][0] <= 70) {
+    GameOver(score, EEPROM.read(address));
+    return 2;
+  }
 
-    // tft.fillCircle(asteroid_posn[2][0], asteroid_posn[2][1], 3, YELLOW);
-    if (millis() - pt_asteroids[2] >= t[2] && checker[2]) {
-      asteroid_posn[2][1] += 1;
-      asteroid_posn[2][0] -= 1;
-      pt_asteroids[2] = millis();
-      tft.fillCircle(asteroid_posn[2][0] + 1, asteroid_posn[2][1] - 1, 3, BLACK);
-      tft.fillCircle(asteroid_posn[2][0], asteroid_posn[2][1], 3, YELLOW);
-    }
-    if (asteroid_posn[2][0] <= 70) {
-      GameOver(50, 99);
-      return 2;
-    }
-  
 
-    // tft.fillCircle(asteroid_posn[3][0], 64, 3, YELLOW);
-    if (millis() - pt_asteroids[3] >= t[3] && checker[3]) {
-      asteroid_posn[3][0] -= 1;
-      pt_asteroids[3] = millis();
-      tft.fillCircle(asteroid_posn[3][0] + 1, 64, 3, BLACK);
-      tft.fillCircle(asteroid_posn[3][0], 64, 3, YELLOW);
-    }
-    if (asteroid_posn[3][0] <= 73) {
-      GameOver(50, 99);
-      return 3;
-    }
-  
+  // tft.fillCircle(asteroid_posn[3][0], 64, 3, YELLOW);
+  if (checker[3] && millis() - pt_asteroids[3] >= t[3]) {
+    asteroid_posn[3][0] -= increment[3];
+    pt_asteroids[3] = millis();
+    tft.fillCircle(asteroid_posn[3][0] + increment[3], 64, 3, BLACK);
+    tft.fillCircle(asteroid_posn[3][0], 64, 3, YELLOW);
+  }
+  if (asteroid_posn[3][0] <= 73) {
+    GameOver(score, EEPROM.read(address));
+    return 3;
+  }
 
-    // tft.fillCircle(asteroid_posn[4][0], asteroid_posn[4][1], 3, YELLOW);
 
-    if (millis() - pt_asteroids[4] >= t[4] && checker[4]) {
-      asteroid_posn[4][1] -= 1;
-      asteroid_posn[4][0] -= 1;
-      pt_asteroids[4] = millis();
-      tft.fillCircle(asteroid_posn[4][0] + 1, asteroid_posn[4][1] + 1, 3, BLACK);
-      tft.fillCircle(asteroid_posn[4][0], asteroid_posn[4][1], 3, YELLOW);
-    }
-    if (asteroid_posn[4][1] <= 70) {
-      GameOver(50, 99);
-      return 4;
-    }
-  
+  // tft.fillCircle(asteroid_posn[4][0], asteroid_posn[4][1], 3, YELLOW);
 
-      // tft.fillCircle(64, asteroid_posn[5][1], 3, YELLOW);
+  if (checker[4] && millis() - pt_asteroids[4] >= t[4]) {
+    asteroid_posn[4][1] -= increment[4];
+    asteroid_posn[4][0] -= increment[4];
+    pt_asteroids[4] = millis();
+    tft.fillCircle(asteroid_posn[4][0] + increment[4], asteroid_posn[4][1] + increment[4], 3, BLACK);
+    tft.fillCircle(asteroid_posn[4][0], asteroid_posn[4][1], 3, YELLOW);
+  }
+  if (asteroid_posn[4][1] <= 70) {
+    GameOver(score, EEPROM.read(address));
+    return 4;
+  }
 
-      if (millis() - pt_asteroids[5] >= t[5] && checker[5]) {
-        asteroid_posn[5][1] -= 1;
-        pt_asteroids[5] = millis();
-        tft.fillCircle(64, asteroid_posn[5][1] + 1, 3, BLACK);
-        tft.fillCircle(64, asteroid_posn[5][1], 3, YELLOW);
-      }
-      if (asteroid_posn[5][1] <= 75) {
-        GameOver(50, 99);
-        return 5;
-      }    
-  
 
-    // tft.fillCircle(asteroid_posn[6][0], asteroid_posn[6][1], 3, YELLOW);
-    if (millis() - pt_asteroids[6] >= t[6] && checker[6]) {
-      asteroid_posn[6][1] -= 1;
-      asteroid_posn[6][0] += 1;
-      pt_asteroids[6] = millis();
-      tft.fillCircle(asteroid_posn[6][0] - 1, asteroid_posn[6][1] + 1, 3, BLACK);
-      tft.fillCircle(asteroid_posn[6][0], asteroid_posn[6][1], 3, YELLOW);
-    }
-    if (asteroid_posn[6][1]<= 70) {
-      GameOver(50, 99);
-      return 6;
-    }
-  
+  // tft.fillCircle(64, asteroid_posn[5][1], 3, YELLOW);
 
-    // tft.fillCircle(asteroid_posn[7][0], 64, 3, YELLOW);
-    if (millis() - pt_asteroids[7] >= t[7] && checker[7]) {
-      asteroid_posn[7][0] += 1;
-      pt_asteroids[7] = millis();
-      tft.fillCircle(asteroid_posn[7][0] - 1, 64, 3, BLACK);
-      tft.fillCircle(asteroid_posn[7][0], 64, 3, YELLOW);
-    }
-    if (asteroid_posn[7][0] >= 54) {
-      GameOver(50, 99);
-      return 7;
-    }
-  
+  if (checker[5] && millis() - pt_asteroids[5] >= t[5]) {
+    asteroid_posn[5][1] -= increment[5];
+    pt_asteroids[5] = millis();
+    tft.fillCircle(64, asteroid_posn[5][1] + increment[5], 3, BLACK);
+    tft.fillCircle(64, asteroid_posn[5][1], 3, YELLOW);
+  }
+  if (asteroid_posn[5][1] <= 75) {
+    GameOver(score, EEPROM.read(address));
+    return 5;
+  }
 
-    // tft.fillCircle(asteroid_posn[8][0], asteroid_posn[8][1], 3, YELLOW);
-    if (millis() - pt_asteroids[8] >= t[8] && checker[8]) {
-      asteroid_posn[8][1] += 1;
-      asteroid_posn[8][0] += 1;
-      pt_asteroids[8] = millis();
-      tft.fillCircle(asteroid_posn[8][0] - 1, asteroid_posn[8][1] - 1, 3, BLACK);
-      tft.fillCircle(asteroid_posn[8][0], asteroid_posn[8][1], 3, YELLOW);
-    }
-    if (asteroid_posn[8][1] >= 57) {
-      GameOver(50, 99);
-      return 8;
-    }
-  
+
+  // tft.fillCircle(asteroid_posn[6][0], asteroid_posn[6][1], 3, YELLOW);
+  if (checker[6] && millis() - pt_asteroids[6] >= t[6]) {
+    asteroid_posn[6][1] -= increment[6];
+    asteroid_posn[6][0] += increment[6];
+    pt_asteroids[6] = millis();
+    tft.fillCircle(asteroid_posn[6][0] - increment[6], asteroid_posn[6][1] + increment[6], 3, BLACK);
+    tft.fillCircle(asteroid_posn[6][0], asteroid_posn[6][1], 3, YELLOW);
+  }
+  if (asteroid_posn[6][1] <= 70) {
+    GameOver(score, EEPROM.read(address));
+    return 6;
+  }
+
+
+  // tft.fillCircle(asteroid_posn[7][0], 64, 3, YELLOW);
+  if (checker[7] && millis() - pt_asteroids[7] >= t[7]) {
+    asteroid_posn[7][0] += increment[7];
+    pt_asteroids[7] = millis();
+    tft.fillCircle(asteroid_posn[7][0] - increment[7], 64, 3, BLACK);
+    tft.fillCircle(asteroid_posn[7][0], 64, 3, YELLOW);
+  }
+  if (asteroid_posn[7][0] >= 54) {
+    GameOver(score, EEPROM.read(address));
+    return 7;
+  }
+
+
+  // tft.fillCircle(asteroid_posn[8][0], asteroid_posn[8][1], 3, YELLOW);
+  if (checker[8] && millis() - pt_asteroids[8] >= t[8]) {
+    asteroid_posn[8][1] += increment[8];
+    asteroid_posn[8][0] += increment[8];
+    pt_asteroids[8] = millis();
+    tft.fillCircle(asteroid_posn[8][0] - increment[8], asteroid_posn[8][1] - increment[8], 3, BLACK);
+    tft.fillCircle(asteroid_posn[8][0], asteroid_posn[8][1], 3, YELLOW);
+  }
+  if (asteroid_posn[8][1] >= 57) {
+    GameOver(score, EEPROM.read(address));
+    return 8;
+  }
 }
 
-int ammo = 7;
+
 int shooter(int direction) {
   if (ammo == 0 && digitalRead(B) == 0) {
     ammo = 7;
@@ -543,15 +546,65 @@ int shooter(int direction) {
       ammoDisplay(ammo);
       return 8;
     }
-    } else {
-      return NULL;
+  } else {
+    return NULL;
+  }
+}
+bool collision(byte k) {
+  if (k == 1 && asteroid_presence[1]) {
+    // tft.fillCircle(64, asteroid_posn[1][1], 3, RED);
+    tft.fillCircle(64, asteroid_posn[1][1], 3, BLACK);
+    asteroid_posn[1][1] = asteroid_posn_reset[1][1];
+    asteroid_presence[1] = 0;
+    return 1;
+  } else if (k == 2 && asteroid_presence[2]) {
+    tft.fillCircle(asteroid_posn[2][0], asteroid_posn[2][1], 3, BLACK);
+    asteroid_posn[2][0] = asteroid_posn_reset[2][0];
+    asteroid_posn[2][1] = asteroid_posn_reset[2][1];
+    asteroid_presence[2] = 0;
+    return 1;
+  } else if (k == 3 && asteroid_presence[3]) {
+    tft.fillCircle(asteroid_posn[3][0], 64, 3, BLACK);
+    asteroid_posn[3][0] = asteroid_posn_reset[3][0];
+    asteroid_presence[3] = 0;
+    return 1;
+  } else if (k == 4 && asteroid_presence[4]) {
+    tft.fillCircle(asteroid_posn[4][0], asteroid_posn[4][1], 3, BLACK);
+    asteroid_posn[4][0] = asteroid_posn_reset[4][0];
+    asteroid_posn[4][1] = asteroid_posn_reset[4][1];
+    asteroid_presence[4] = 0;
+    return 1;
+  } else if (k == 5 && asteroid_presence[5]) {
+    tft.fillCircle(64, asteroid_posn[5][1], 3, BLACK);
+    asteroid_posn[5][1] = asteroid_posn_reset[5][1];
+    asteroid_presence[5] = 0;
+    return 1;
+  } else if (k == 6 && asteroid_presence[6]) {
+    tft.fillCircle(asteroid_posn[6][0], asteroid_posn[6][1], 3, BLACK);
+    asteroid_posn[6][0] = asteroid_posn_reset[6][0];
+    asteroid_posn[6][1] = asteroid_posn_reset[6][1];
+    asteroid_presence[6] = 0;
+    return 1;
+  } else if (k == 7 && asteroid_presence[7]) {
+    tft.fillCircle(asteroid_posn[7][0], 64, 3, BLACK);
+    asteroid_posn[7][0] = asteroid_posn_reset[7][0];
+    asteroid_presence[7] = 0;
+    return 1;
+  } else if (k == 8 && asteroid_presence[8]) {
+    tft.fillCircle(asteroid_posn[8][0], asteroid_posn[8][1], 3, BLACK);
+    asteroid_posn[8][0] = asteroid_posn_reset[8][0];
+    asteroid_posn[8][1] = asteroid_posn_reset[8][1];
+    asteroid_presence[8] = 0;
+    return 1;
+  } else {
+    return 0;
   }
 }
 unsigned long pt_scatter = 0;
 bool scatter(int t) {
-  if ((millis() - pt_scatter >= t) ) {
+  if ((millis() - pt_scatter >= t)) {
     tft.drawCircle(5, 124, 3, BLUE);
-      if(!digitalRead(A)){
+    if (!digitalRead(A)) {
       tft.drawLine(64, 64, 64, 0, BLUE);
       tft.drawLine(64, 64, 128, 0, BLUE);
       tft.drawLine(64, 64, 128, 64, BLUE);
@@ -569,74 +622,99 @@ bool scatter(int t) {
       tft.drawLine(64, 64, 0, 128, BLACK);
       tft.drawLine(64, 64, 0, 64, BLACK);
       tft.drawLine(64, 64, 0, 0, BLACK);
+
+      tft.fillCircle(64, asteroid_posn[1][1], 3, BLACK);
+      asteroid_posn[1][1] = asteroid_posn_reset[1][1];
+      asteroid_presence[1] = 0;
+
+      tft.fillCircle(asteroid_posn[2][0], asteroid_posn[2][1], 3, BLACK);
+      asteroid_posn[2][0] = asteroid_posn_reset[2][0];
+      asteroid_posn[2][1] = asteroid_posn_reset[2][1];
+      asteroid_presence[2] = 0;
+
+      tft.fillCircle(asteroid_posn[3][0], 64, 3, BLACK);
+      asteroid_posn[3][0] = asteroid_posn_reset[3][0];
+      asteroid_presence[3] = 0;
+
+      tft.fillCircle(asteroid_posn[4][0], asteroid_posn[4][1], 3, BLACK);
+      asteroid_posn[4][0] = asteroid_posn_reset[4][0];
+      asteroid_posn[4][1] = asteroid_posn_reset[4][1];
+      asteroid_presence[4] = 0;
+
+      tft.fillCircle(64, asteroid_posn[5][1], 3, BLACK);
+      asteroid_posn[5][1] = asteroid_posn_reset[5][1];
+      asteroid_presence[5] = 0;
+
+      tft.fillCircle(asteroid_posn[6][0], asteroid_posn[6][1], 3, BLACK);
+      asteroid_posn[6][0] = asteroid_posn_reset[6][0];
+      asteroid_posn[6][1] = asteroid_posn_reset[6][1];
+      asteroid_presence[6] = 0;
+
+      tft.fillCircle(asteroid_posn[7][0], 64, 3, BLACK);
+      asteroid_posn[7][0] = asteroid_posn_reset[7][0];
+      asteroid_presence[7] = 0;
+
+      tft.fillCircle(asteroid_posn[8][0], asteroid_posn[8][1], 3, BLACK);
+      asteroid_posn[8][0] = asteroid_posn_reset[8][0];
+      asteroid_posn[8][1] = asteroid_posn_reset[8][1];
+      asteroid_presence[8] = 0;
       pt_scatter = millis();
       return 1;
-      }
-  }
-  else{
+    }
+  } else {
     tft.drawCircle(5, 124, 3, BLACK);
     return 0;
   }
 }
 unsigned long pt_shield = 0;
 bool shield(int t) {
-  if ((millis() - pt_shield >= t) ) {
-    tft.drawCircle(5, 124, 3, BLUE);
-      if(!digitalRead(A)){
-tft.drawCircle(64, 64, 7, CYAN);
+  if ((millis() - pt_shield >= t)) {
+    tft.drawCircle(5, 115, 3, CYAN);
+    if (!digitalRead(D)) {
+      tft.drawCircle(64, 64, 7, CYAN);
       delay(150);
-tft.drawCircle(64, 64, 7, BLACK);
+      tft.drawCircle(64, 64, 7, BLACK);
       pt_shield = millis();
       return 1;
-      }
-  }
-  else{
-    tft.drawCircle(5, 124, 3, BLACK);
+    }
+  } else {
+    tft.drawCircle(5, 115, 3, BLACK);
     return 0;
   }
 }
 
-bool y[9] = {1,1,1,1,1,1,1,1,1};
 
+
+byte asteroid_increment[9] = { 1, 1, 0, 0, 0, 0, 0, 0, 0 };
 void loop() {
-// Serial.println(EEPROM.read(address));
+  // Serial.println(EEPROM.read(address));
   if (digitalRead(F) == 0) {
-    pause(EEPROM.read(address), EEPROM.read(address));
+    pause(score, EEPROM.read(address));
     delay(100);
   }
   if (digitalRead(E) == 0) {
-    GameOver(EEPROM.read(address), EEPROM.read(address));
+    GameOver(score, EEPROM.read(address));
     delay(100);
   }
   // Serial.println(shooter(point(15)));
-  byte k = shooter(point(15));
-  if(k == 1){
-y[1] = 0;
-tft.fillCircle(64, asteroid_posn[1][1], 3, RED);
-tft.fillCircle(64, asteroid_posn[1][1], 3, BLACK);
+  if (collision(shooter(point(15)))) {
+    score++;
+    scoreDisplay(score);
   }
-  // else  if(k == 2){
-  //   GameOver(1,2);
+  // if (asteroid_presence[1] == 0 && asteroid_speed[1] >= 0) {
+  //   asteroid_speed[1] -= 10;
+  //   // asteroid_increment[i]++;
+  //   asteroid_presence[1]++;
   // }
-  // else  if(k == 3){
-  //   GameOver(1,3);
+  // for(int i = 1 ; i <= 8 ;i++){
+  //   if(asteroid_presence[i]==0 && asteroid_speed[i]>=0){
+  //     asteroid_speed[i]-=100;
+  //     // asteroid_increment[i]++;
+  //     asteroid_presence[i]++;
+  //   }
   // }
-  // else  if(k == 4){
-  //   GameOver(1,4);
-  // }
-  // else  if(k == 5){
-  //   GameOver(1,5);
-  // }
-  // else  if(k == 6){
-  //   GameOver(1,6);
-  // }  else if(k == 7){
-  //   GameOver(1,7);
-  // }
-  //   else if(k == 8){
-  //   GameOver(1,8);
-  // }
-  int x[9] = {100,100,100,100,100,100,100,100,100};
 
-shield(100);
-asteroids(x,y);
+  // scatter(1000);
+  // shield(1000);
+  asteroids(asteroid_speed, asteroid_presence, asteroid_increment);
 }
