@@ -14,16 +14,16 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 
 # Control Scheme:-
 + The game starts with a startup screen having it's name and highscore of the game. 
-+ Press 'F' to start the game.
-+ Pressing 'E' will take you to the rules page.
++ Press '**F**' to start the game.
++ Pressing '**E**' will take you to the rules page.
 + Asteroids will be spawning randomly from different directions in the game and the player shall aim and shoot the asteroids to destroy them.
 + Use the joystick to start aiming at the spwaning asteroids.
-+ Press 'B' to shoot the asteroid.
-+ Only ONE asteroid can be shot down at a time.
-+ The player has s to shoot down the asteroids, there is a pointer to cross check his aim.
-+ When the player runs out of ammo, press the button 'B' on the joystick shield to reload.
-+ Press 'A' to use scatter which destroys all the asteroids present on the screen.
-+ Every 20 seconds the player can see a blue little circle on the left corner,which indicates a special powerup(scatter).
++ Press '**B**' to shoot the asteroid.
++ Only **ONE** asteroid can be shot down at a time.
++ The player has to shoot down the asteroids in order to survive,there is an aim assist to indicate the direction of fire.
++ When the player runs out of ammo, press the button '**B**' on the joystick shield to reload.
++ Press '**A**' to use **Scatter Shot** which destroys all the asteroids present on the screen.
++ Every 20 seconds the player can see a blue little circle on the left corner,which indicates a special powerup(**Scatter Shot**).
 
 # Implementation of high score:-
 + The high score data is being held in EEPROM(Electrically Erasable Programmable Read-Only Memory).
@@ -34,8 +34,8 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 ### Arduino UNO:-
 + It is the brains of the operation
 + We will mainly be using SPI protocol to communicate with the display.
-+ The arduino's digital pins 2 to 7 are being used for the push button switches.
-+ The analog pin A0 and A1 will be taking input from the joystick using arduino's 10 bit ADC.
++ The arduino's digital pins **2** to **7** are being used for the push button switches.
++ The analog pin **A0** and **A1** will be taking input from the joystick using arduino's 10 bit ADC.
 + The arduino is being powered through the USB-A port.
 
 ### ST7735 TFT LCD Display:-
@@ -50,6 +50,6 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 + The joystick switch button(The button which activates when you press the joystick) is not being used as the joystick shield connects that button to digital pin 8 but it is being used for the SPI protocol for the display.
 
 ### Push button switches:-
-+ There are six push button switches labeled from 'A' to 'F'.
-+ The joystick module uses pull up resistors to pull the switches to a logical *HIGH*.
-+ When the switches are activated, they are connected to the ground to pull it to logical *LOW*.
++ There are six push button switches labeled from '**A**' to '**F**'.
++ The joystick module uses pull up resistors to pull the switches to a logical **HIGH**.
++ When the switches are activated, they are connected to the ground to pull it to logical **LOW**.
