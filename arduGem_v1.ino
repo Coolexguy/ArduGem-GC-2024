@@ -34,7 +34,7 @@ int asteroid_speed[9] = { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 int asteroid_speed_reset[9] = { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 byte asteroid_posn_reset[9][2]{ { 0, 0 }, { 64, 0 }, { 128, 0 }, { 128, 64 }, { 128, 128 }, { 64, 128 }, { 0, 128 }, { 0, 64 }, { 0, 0 } };
 byte asteroid_posn[9][2]{ { 0, 0 }, { 64, 0 }, { 128, 0 }, { 128, 64 }, { 128, 128 }, { 64, 128 }, { 0, 128 }, { 0, 64 }, { 0, 0 } };
-bool asteroid_presence[9] = { 1, 1, 1, 0, 0, 0, 0, 0, 0 };
+bool asteroid_presence[9] = { 1, 1, 0, 0, 0, 0, 0, 0, 0 };
 byte dir() {
   int x = analogRead(X);
   int y = analogRead(Y);
@@ -712,9 +712,76 @@ bool shield(int t) {
   }
 }
 
+void pattern_2() {
+  // asteroid_presence[1] = 1;
+  // asteroid_presence[3] = 1;
+  // asteroid_presence[5] = 1;
+  // asteroid_presence[7] = 1;
+  // pattern();
+  if (asteroid_presence[1] == 0 && asteroid_presence[3] == 0 && asteroid_presence[5] == 0 && asteroid_presence[7] == 0) {
+    pattern_3();
+  }
+}
+void pattern_3() {
+  asteroid_presence[2] = 1;
+  asteroid_presence[4] = 1;
+  asteroid_presence[6] = 1;
+  asteroid_presence[8] = 1;
+  if (asteroid_presence[2] == 0 || asteroid_presence[4] == 0 || asteroid_presence[6] == 0 || asteroid_presence[8] == 0) {
+    pattern_3();
+  }
+}
+int sum=1;
+bool check[9]={1,1,0,0,0,0,0,0,0};
+void pattern_1() {
+  if (asteroid_presence[1] == 0 && check[1]==1) {
+    asteroid_presence[2] = 1;
+    check[1]=0;
+    check[2]=1;
+  }
+  else if (asteroid_presence[2] == 0 && check[2]==1) {
+     asteroid_presence[3] = 1;
+     check[2]=0;
+     check[3]=1;
+  }
+  else if (asteroid_presence[3] == 0 && check[3]==1) {
+    asteroid_presence[4] = 1;
+    check[3]=0;
+    check[4]=1;
+  }
+  else if (asteroid_presence[4] == 0 && check[4]==1) {
+    asteroid_presence[5] = 1;
+    check[4]=0;
+    check[5]=1;
+  }
+  else if (asteroid_presence[5] == 0 && check[5]==1) {
+    asteroid_presence[6] = 1;
+    check[5]=0;
+    check[6]=1;
+  }
+  else if (asteroid_presence[6] == 0 && check[6]==1) {
+    asteroid_presence[7] = 1;
+    check[6]=0;
+    check[7]=1;
+  }
+  else if (asteroid_presence[7] == 0 && check[7]==1) {
+    asteroid_presence[8] = 1;
+    check[7]=0;
+    check[8]=1;
+  }
+  else if (asteroid_presence[8] == 0 && check[8]==1) {
+    pattern_3();
+    check[8]=0;
+  }
+  for(int i=1;i<=8;i++){
+    sum+=check[i];
+  }
+  if(sum==0){
+    pattern_3();
+  }
+}
 
-
-byte asteroid_increment[9] = { 1, 1, 1, 0, 0, 0, 0, 0, 0 };
+byte asteroid_increment[9] = { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 void loop() {
   // Serial.println(EEPROM.read(address));
   if (digitalRead(F) == 0) {
@@ -726,11 +793,11 @@ void loop() {
     delay(100);
   }
   // Serial.println(shooter(point(15)));
-  if (collision(shooter(point(15))) || scatter(1000)) {
+  if (collision(shooter(point(15))) || scatter(20000)) {
 
     scoreDisplay(score);
-    asteroid_presence[1]++;
-    asteroid_presence[2]++;
+    // asteroid_presence[1]++;
+    // asteroid_presence[2]++;
   }
 
   // if (asteroid_presence[1] == 0 && asteroid_speed[1] >= 0) {
@@ -745,7 +812,7 @@ void loop() {
   //     asteroid_presence[i]++;
   //   }
   // }
-
+pattern_1();
   // scatter(1000);
   // shield(1000);
   asteroids(asteroid_speed, asteroid_presence, asteroid_increment);
