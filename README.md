@@ -1,5 +1,5 @@
 # Asteroid Shooter :-
-We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competition).
+We developed it for  ArduGem GC'24(IIT Bhubaneswar's inter-branch competition).
 
 # Description:-
 + This game is based on the concept of Arcade style survival games.
