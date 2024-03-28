@@ -2,7 +2,7 @@
 We developed it for  ArduGem GC'24(IIT Bhubaneswar's inter-branch competition).
 
 # Description:-
-+ This game is based on the concept of Arcade style survival games.
++ This project is based on the concept of Arcade style survival games.
 + It is a game of pace,accuracy and reflexes.
 + Asteroids will be spawning randomly from different directions in the game and the player shall aim and shoot the asteroids to destroy them.
 
