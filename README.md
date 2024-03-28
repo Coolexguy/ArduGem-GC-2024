@@ -39,6 +39,7 @@ We developed it for  ArduGem GC'24(IIT Bhubaneswar's inter-branch competition).
 + The Arduino's digital pins **2** to **7** are being used for the push button switches.
 + The analog pin **A0** and **A1** will be taking input from the joystick using Arduino's 10 bit ADC.
 + The Arduino is being powered through the USB-A port.
++ SHIELD.
 
 ### ST7735 TFT LCD Display:-
 + This display uses SPI protocol.
