@@ -216,9 +216,9 @@ void startUp() {
     tft.print("-see rules");
 
     tft.setTextSize(1);
-    tft.setCursor(18, 90);
+    tft.setCursor(26, 90);//
     tft.print("HIGH SCORE:");
-
+  // tft.drawLine(87,0,87,128, RED);//for alignment
     tft.setCursor(90, 85);
     tft.setTextSize(2);
     tft.print(EEPROM.read(address));
@@ -284,10 +284,10 @@ void pause(byte currentScore, byte highScore) {
   tft.setCursor(92, 65);
   tft.setTextSize(2);
   tft.print(currentScore);
-
+  // tft.drawLine(87,0,87,128, RED);//for alignment
   tft.setTextSize(1);
-  tft.setCursor(18, 90);
-  tft.print("HIGH SCORE:");
+  tft.setCursor(26, 90);
+  tft.print("HIGH SCORE:");//
   tft.setCursor(90, 85);
   tft.setTextSize(2);
   tft.print(EEPROM.read(address));
@@ -317,12 +317,12 @@ void GameOver(byte currentScore, byte highScore) {
   tft.setCursor(40, 30);
   tft.setTextSize(2);
   tft.print("OVER");
-
+  // tft.drawLine(87,0,87,128, RED);//for alignment
   tft.setTextColor(WHITE);
   tft.setTextSize(1);
   tft.setCursor(8, 70);
   tft.print("CURRENT SCORE:");
-  tft.setCursor(90, 65);
+  tft.setCursor(92, 65);
   tft.setTextSize(2);
   tft.print(currentScore);
   if (currentScore > highScore) {
@@ -331,7 +331,7 @@ void GameOver(byte currentScore, byte highScore) {
   score = 0;
   ammo = 7;
   tft.setTextSize(1);
-  tft.setCursor(18, 90);
+  tft.setCursor(26, 90);
   tft.print("HIGH SCORE:");
   tft.setCursor(90, 85);
   tft.setTextSize(2);
