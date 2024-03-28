@@ -25,6 +25,10 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 + Press 'A' to use scatter which destroys all the asteroids present on the screen.
 + Every 20 seconds the player can see a blue little circle on the left corner,which indicates a special powerup(scatter).
 
+# Implementation of high score:-
++ The high score data is being held in EEPROM(Electrically Erasable Programmable Read-Only Memory).
++ This allows us for the high score to be maintained on the device even if the power is lost as the data is being returned to the EEPROM, this is the reason why the data is being saved in EEPROM.
+
 # Circuit and it's components:-
 ![WhatsApp Image 2024-03-28 at 18 45 41_9ac40f2a](https://github.com/Coolexguy/ArduGem-GC-2024/assets/164471213/b7f124eb-9f84-4dfe-99d7-363cd5b28971)
 ### Arduino UNO:-
