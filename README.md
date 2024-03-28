@@ -4,7 +4,7 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 # Description:-
 + This game is based on the concept of Arcade style survival games.
 + It is a game of pace,accuracy and reflexes.
-+ Asteroids will be spawning randomly from 8 different directions in the game and the player shall aim and shoot the asteroids to destroy them.
++ Asteroids will be spawning randomly from different directions in the game and the player shall aim and shoot the asteroids to destroy them.
 
 # Dependecies:-
 + <SPI.h>
@@ -16,7 +16,7 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 + The game starts with a startup screen having it's name and highscore of the game. 
 + Press 'F' to start the game.
 + Pressing 'E' will take you to the rules page.
-+ Asteroids will be spawning randomly from 8 different directions in the game and the player shall aim and shoot the asteroids to destroy them.
++ Asteroids will be spawning randomly from different directions in the game and the player shall aim and shoot the asteroids to destroy them.
 + Use the joystick to start aiming at the spwaning asteroids.
 + Press 'B' to shoot the asteroid.
 + Only ONE asteroid can be shot down at a time.
@@ -40,6 +40,7 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 
 ### ST7735 TFT LCD Display:-
 + This display uses SPI protocol.
++ This requies the dependency <EEPROM.h>
 + <Adafruit_GFX.h> <Adafruit_ST7735.h>  <SPI.h> These are the three dependecies used for the display.
 
 ### Joystick Shield:-
