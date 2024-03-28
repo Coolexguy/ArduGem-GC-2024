@@ -734,13 +734,13 @@ bool check[9]={1,1,0,0,0,0,0,0,0};
 void pattern_1() {
   if (asteroid_presence[1] == 0 && check[1]==1) {
     asteroid_presence[2] = 1;
-    check[1]==0;
-    check[2]==1;
+    check[1]=0;
+    check[2]=1;
   }
   else if (asteroid_presence[2] == 0 && check[2]==1) {
      asteroid_presence[3] = 1;
-     check[2]==0;
-     check[3]==1;
+     check[2]=0;
+     check[3]=1;
   }
   else if (asteroid_presence[3] == 0 && check[3]==1) {
     asteroid_presence[4] = 1;
@@ -772,7 +772,7 @@ void pattern_1() {
     check[8]=0;
   }
   for(int i=1;i<=8;i++){
-    sum+=asteroid_presence[i];
+    sum+=check[i];
   }
   if(sum==0){
     pattern_3();
