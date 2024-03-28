@@ -25,8 +25,9 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 + Press '**A**' to use **Scatter Shot** which destroys all the asteroids present on the screen.
 + Every 20 seconds the player can see a blue little circle on the left corner,which indicates a special powerup(**Scatter Shot**).
 
-# Implementation of high score:-
+# Implementation of High Score:-
 + The high score data is being held in EEPROM(Electrically Erasable Programmable Read-Only Memory).
++ This requies the dependency <EEPROM.h>
 + This allows us for the high score to be maintained on the device even if the power is lost as the data is being returned to the EEPROM, this is the reason why the data is being saved in EEPROM.
 
 # Circuit and it's components:-
@@ -40,7 +41,6 @@ We developed it for  ArduGem for GC'24(IIT Bhubaneswar's inter-branch competitio
 
 ### ST7735 TFT LCD Display:-
 + This display uses SPI protocol.
-+ This requies the dependency <EEPROM.h>
 + <Adafruit_GFX.h> <Adafruit_ST7735.h>  <SPI.h> These are the three dependecies used for the display.
 
 ### Joystick Shield:-
