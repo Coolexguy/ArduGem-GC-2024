@@ -1,3 +1,4 @@
+![WhatsApp Image 2024-03-28 at 22 46 49_516fd0bf](https://github.com/Coolexguy/ArduGem-GC-2024/assets/164471213/b4e333c1-a1c3-4c1c-a0e7-118ded6fdff8)
 # Asteroid Shooter :-
 We developed it for  ArduGem GC'24(IIT Bhubaneswar's inter-branch competition).
 
